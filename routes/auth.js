@@ -21,13 +21,13 @@ module.exports = (app) => {
           const { sub, name, given_name, picture, email } = profile._json;
 
           const payload = {
-            id: sub,
+            id: Number(sub),
             name: name,
             email: email,
             photo: "",
           };
 
-          userModel.findOne({ id: sub }, async function (err, user) {
+          userModel.findOne({ id: Number(sub) }, async function (err, user) {
             if (err) {
               return cb(err);
             }
@@ -37,7 +37,7 @@ module.exports = (app) => {
 
               await newUser.save();
             }
-            console.log('payload', payload)
+
             return cb(null, payload);
           });
         }
@@ -61,7 +61,7 @@ module.exports = (app) => {
       const options = {
         expiresIn: "1d",
       };
-      console.log('req.user', req.user)
+
       const token = jwt.sign({ id: userId }, "yoursecretkey", options);
       res.redirect(`http://localhost:3000/auth?token=${token}`);
     }

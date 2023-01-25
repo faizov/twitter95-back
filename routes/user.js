@@ -15,6 +15,7 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
   app.get("/user/:id", async (req, res) => {
+    console.log("req.params.id", req.params.id);
     const user = await userModel.findOne({ id: req.params.id });
 
     try {
