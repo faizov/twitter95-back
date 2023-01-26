@@ -15,7 +15,6 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
   app.get("/user/:id", async (req, res) => {
-    console.log("req.params.id", req.params.id);
     const user = await userModel.findOne({ id: req.params.id });
 
     try {
@@ -28,7 +27,7 @@ module.exports = (app) => {
 
           const body = {
             user: user,
-            tweets: tweets,
+            tweets: tweets.reverse(),
           };
 
           res.send(body);
@@ -55,5 +54,18 @@ module.exports = (app) => {
         }
       });
     } catch (error) {}
+  });
+
+  app.put("/user/edit", async (req, res) => {
+    const updateUser = new userModel(req.body);
+
+    userModel.findOneAndUpdate(
+      { _id: req.body._id },
+      { bio: updateUser.bio, name: updateUser.name },
+      { upsert: true, setDefaultsOnInsert: true },
+      function (err, userUpdate) {
+        return res.json(userUpdate);
+      }
+    );
   });
 };
