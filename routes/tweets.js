@@ -54,13 +54,17 @@ module.exports = (app) => {
     const tweetId = req.params.id;
 
     try {
-      const tweet = await tweetModel.findOne({ id: tweetId });
+      const tweet = await tweetModel.findById(tweetId);
 
       tweet.likes += 1;
       tweet.lastModified = new Date();
 
-      await tweet.save().then();
-      res.send(tweet);
+      try {
+        await tweet.save();
+        res.send(tweet);
+      } catch (error) {
+        res.send(error);
+      }
     } catch (error) {
       res.send(error);
     }
