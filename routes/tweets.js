@@ -52,18 +52,36 @@ module.exports = (app) => {
 
   app.patch("/tweets/:id/like", async (req, res) => {
     const tweetId = req.params.id;
+    const userId = req.user.id;
+    const user = await userModel.findOne({ id: userId });
+    const tweet = await tweetModel.findById(tweetId);
 
     try {
-      const tweet = await tweetModel.findById(tweetId);
+      if (!user.likes.includes(tweetId)) {
+        tweet.likes += 1;
+        tweet.lastModified = new Date();
 
-      tweet.likes += 1;
-      tweet.lastModified = new Date();
+        await userModel.findOneAndUpdate(
+          { id: req.user.id },
+          {
+            $push: { likes: tweetId },
+          }
+        );
 
-      try {
         await tweet.save();
         res.send(tweet);
-      } catch (error) {
-        res.send(error);
+      } else {
+        tweet.likes -= 1;
+
+        await userModel.findOneAndUpdate(
+          { id: req.user.id },
+          {
+            $pull: { likes: tweetId },
+          }
+        );
+
+        await tweet.save();
+        res.send(tweet);
       }
     } catch (error) {
       res.send(error);

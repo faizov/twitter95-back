@@ -38,7 +38,7 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/user/uploadavatar", upload.single("file"), async (req, res) => {
+  app.put("/user/uploadavatar", upload.single("file"), async (req, res) => {
     const user = req.user;
 
     try {

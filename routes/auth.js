@@ -24,7 +24,8 @@ module.exports = (app) => {
             id: Number(sub),
             name: name,
             email: email,
-            photo: "",
+            avatar: "",
+            banner: "",
           };
 
           userModel.findOne({ id: Number(sub) }, async function (err, user) {

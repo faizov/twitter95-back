@@ -16,10 +16,14 @@ const UserSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-  photo: {
+  avatar: {
     type: String,
     require,
   },
+  banner: {
+    String,
+  },
+  likes: [],
 });
 
 const User = mongoose.model("User", UserSchema);
