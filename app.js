@@ -5,12 +5,9 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
-mongoose.connect(
-  "mongodb+srv://twitter:Hq0sGQ1mrugr4yMD@twitter95.gcu75lv.mongodb.net/?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-  }
-);
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+});
 
 const app = express();
 const port = 3001;
