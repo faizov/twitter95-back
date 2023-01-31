@@ -30,13 +30,16 @@ module.exports = (app) => {
 
   app.get("/tweets/:id", async (req, res) => {
     const tweetId = req.params.id;
-    const tweet = await tweetModel.findById(tweetId);
-
-    try {
-      res.send(tweet);
-    } catch (error) {
-      res.send(error);
-    }
+    tweetModel.findById(tweetId, function (error, tweet) {
+      try {
+        if (error) {
+          throw new Error("Tweet not found");
+        }
+        res.send(tweet);
+      } catch (error) {
+        res.status(404).send(error.message);
+      }
+    });
   });
 
   app.delete("/tweets/:id", async (req, res) => {

@@ -3,9 +3,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const { createProxyMiddleware } = require("http-proxy-middleware");
+require("dotenv").config();
 
-mongoose.connect(process.env.DATABASE_URL, {
+const DATABASE_URL = process.env.DATABASE_URL
+
+mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
 });
 
