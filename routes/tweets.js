@@ -1,5 +1,6 @@
 const tweetModel = require("../models/tweet");
 const userModel = require("../models/user");
+const mongoose = require("mongoose");
 
 module.exports = (app) => {
   app.get("/tweets", (req, res) => {
@@ -13,18 +14,21 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/tweets/add", async (req, res) => {
+  app.post("/tweets", async (req, res) => {
+    const { text } = req.body;
+    const author = req.user.id;
+
     try {
-      const newData = req.body;
-      newData.authorId = req.user.id;
-      newData.date = new Date().toLocaleDateString();
-
-      const tweet = new tweetModel(newData);
+      const tweet = new tweetModel({
+        author: author,
+        text,
+        date: new Date().toLocaleString(),
+      });
       await tweet.save();
-
-      res.sendStatus(200);
+      res.send(tweet);
     } catch (error) {
-      res.send(error);
+      console.error(error);
+      res.sendStatus(500);
     }
   });
 
@@ -88,6 +92,30 @@ module.exports = (app) => {
       }
     } catch (error) {
       res.send(error);
+    }
+  });
+
+  app.post("/tweets/:id/comments", async (req, res) => {
+    try {
+      const tweet = await Tweet.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          $push: {
+            comments: {
+              authorId: req.body.authorId,
+              name: req.body.name,
+              avatar: req.body.avatar,
+              nickname: req.body.nickname,
+              text: req.body.text,
+              date: req.body.date,
+            },
+          },
+        },
+        { new: true }
+      );
+      res.send(tweet);
+    } catch (error) {
+      res.status(500).send(error);
     }
   });
 };

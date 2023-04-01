@@ -15,26 +15,28 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
   app.get("/user/:id", async (req, res) => {
-    const user = await userModel.findOne({ id: req.params.id });
+    const { id } = req.params;
+    const user = await userModel.findOne({ id: id });
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
 
     try {
-      tweetModel.find(
-        { authorId: req.params.id },
-        null,
-        { sort: { id: -1 } },
-        (err, tweets) => {
-          if (err) return res.send(err);
+      const tweets = await tweetModel
+        .find({ authorId: id })
+        .sort({ date: -1 })
+        .exec();
 
-          const body = {
-            user: user,
-            tweets: tweets.reverse(),
-          };
+      const body = {
+        user: user,
+        tweets: tweets,
+      };
 
-          res.send(body);
-        }
-      );
+      res.send(body);
     } catch (error) {
-      res.send(error);
+      console.error(error);
+      res.status(500).send("Internal server error");
     }
   });
 
@@ -63,7 +65,11 @@ module.exports = (app) => {
       { _id: req.body._id },
       { bio: updateUser.bio, name: updateUser.name },
       { upsert: true, setDefaultsOnInsert: true },
-      function (err, userUpdate) {
+      async function (err, userUpdate) {
+        await tweetModel.updateMany(
+          { authorId: req.user.id },
+          { name: updateUser.name }
+        );
         return res.json(userUpdate);
       }
     );
