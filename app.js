@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 require("dotenv").config();
 
-const DATABASE_URL = process.env.DATABASE_URL
+const DATABASE_URL = process.env.DATABASE_URL;
 
 mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
@@ -37,8 +37,8 @@ const userRouter = require("./routes/user");
 const tweetsRoutes = require("./routes/tweets");
 
 authRoutes(app);
-userRouter(app);
-tweetsRoutes(app);
+app.use("/user", userRouter(app));
+app.use("/tweets", tweetsRoutes(app));
 
 const db = mongoose.connection;
 

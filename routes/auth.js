@@ -83,7 +83,6 @@ module.exports = (app) => {
 
     try {
       const decoded = jwt.verify(token, "yoursecretkey");
-
       req.user = decoded;
       next();
     } catch (error) {
@@ -92,60 +91,4 @@ module.exports = (app) => {
       });
     }
   });
-
-  // app.post("/auth/login", async (req, res) => {
-  //   const { email, password } = req.body;
-  //   const user = await userModel.findOne({ email });
-
-  //   if (!user)
-  //     return res.status(401).send({ message: "Invalid email or password" });
-
-  //   const isPasswordValid = await bcrypt.compare(password, user.hashPass);
-  //   if (!isPasswordValid)
-  //     return res.status(401).send({ message: "Invalid email or password" });
-
-  //   req.session.userId = user._id;
-  //   res.status(200).send(user);
-  // });
-
-  // app.post("/auth/register", async (req, res) => {
-  //   const userData = req.body;
-  //   const { email, name, nickName, password } = userData;
-  //   const checkEmail = await userModel.findOne({ email: email });
-  //   const checkNickName = await userModel.findOne({
-  //     nickName: nickName,
-  //   });
-
-  //   if (email && nickName && name && password) {
-  //     if (!checkEmail && !checkNickName && validator.isEmail(email)) {
-  //       const user = new userModel(userData);
-
-  //       bcrypt.hash(userData.password, 10, async function (err, hash) {
-  //         if (err) return console.error(err);
-  //         if (hash) {
-  //           user.hashPass = hash;
-  //           console.log("user", user);
-  //           await user.save();
-  //           // req.session.userId = user._id;
-  //           res.sendStatus(200);
-  //         }
-  //       });
-  //     } else {
-  //       return res.status(400).send({
-  //         message: "Email or password missing.",
-  //       });
-  //     }
-  //   } else {
-  //     res.sendStatus(401);
-  //   }
-
-  //   app.get("/user", async (req, res) => {
-  //     const user = await userModel.findOne({ _id: req.body._id });
-  //     try {
-  //       res.send(user);
-  //     } catch (error) {
-  //       res.send(error);
-  //     }
-  //   });
-  // });
 };
