@@ -1,26 +1,5 @@
 const mongoose = require("mongoose");
 
-// const CommentSchema = new mongoose.Schema({
-//   authorId: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "User",
-//     required: true,
-//   },
-//   tweetId: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Tweet",
-//     required: true,
-//   },
-//   text: {
-//     type: String,
-//     required: true,
-//   },
-//   date: {
-//     type: Date,
-//     default: Date.now,
-//   },
-// });
-
 const TweetSchema = new mongoose.Schema({
   authorId: {
     type: Number,
@@ -50,12 +29,11 @@ const TweetSchema = new mongoose.Schema({
   },
   comments: [
     {
+      author: { id: Number, name: String, avatar: String },
       text: String,
-      authorId: Number,
       date: Date,
     },
   ],
-  // comments: [CommentSchema],
 });
 
 const Tweet = mongoose.model("Tweet", TweetSchema);

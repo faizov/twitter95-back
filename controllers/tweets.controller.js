@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const tweetModel = require("../models/tweet");
 const userModel = require("../models/user");
 
@@ -81,20 +83,26 @@ module.exports = {
   },
   addComment: async (req, res) => {
     const tweetId = req.params.id;
+
     const { text } = req.body;
     const authorId = req.user.id;
+    const user = await userModel.findOne({ id: authorId });
 
     try {
       const tweet = await tweetModel.findById(tweetId);
+
       if (!tweet) {
         throw new Error("Tweet not found");
       }
 
       const comment = {
+        author: {
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar,
+        },
         text,
-        authorId,
         date: new Date(),
-        // дополнительные поля комментария
       };
 
       tweet.comments.push(comment);
@@ -115,7 +123,7 @@ module.exports = {
         throw new Error("Tweet not found");
       }
 
-      const comments = tweet.comments;
+      const comments = tweet.comments.reverse();
       res.send(comments);
     } catch (error) {
       res.status(404).send(error.message);
